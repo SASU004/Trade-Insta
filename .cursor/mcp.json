@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "trade-insta": {
+      "command": "bun",
+      "args": ["mcp-server.ts"]
+    }
+  }
+}
