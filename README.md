@@ -37,15 +37,26 @@ bunx tsc --noEmit                     # typecheck
 
 - `config.ts` — central env loading + `createKiteClient()`, IPv4-first workaround for Kite IP whitelisting.
 - `index.ts` — `getProfile()` via env client; runs only when executed directly (`import.meta.main`), so importing it has no side effects.
-- `trade.ts` — `placeOrder(symbol, "BUY" | "SELL", qty)` helper with basic validation (non-empty symbol, positive-int qty), hardcoded to `NSE` / `CNC` / `MARKET`. Duplicated basics: `buyStock(symbol, qty)` / `sellStock(symbol, qty)` thin wrappers, plus `getHoldings()` (lists Kite equity holdings) and `sellAll()` (MARKET-sells every holding with `quantity > 0`).
+- `trade.ts` — live Kite helpers, all hardcoded to `NSE` / `CNC` / `MARKET`: `placeOrder(symbol, "BUY" | "SELL", qty)` (validates non-empty symbol, positive-int qty), `buyStock` / `sellStock` thin wrappers, `getHoldings()` (lists equity holdings), `sellAll()` (MARKET-sells every holding with `quantity > 0`).
+- `mcp-server.ts` — stub tools (not wired to Kite yet): `buy-stock` / `sell-stock` / `get-holdings` / `sell-all`.
+
+## Snippets
 
 ```ts
 import { buyStock, sellStock, getHoldings, sellAll } from "./trade";
 
+// Buy 1x INFY (NSE / CNC / MARKET)
 await buyStock("INFY", 1);
+
+// Sell 1x INFY
 await sellStock("INFY", 1);
-await getHoldings();
-await sellAll(); // sells every holding, returns [{ tradingsymbol, quantity, orderId }]
+
+// List current holdings
+const holdings = await getHoldings();
+console.log(holdings.map((h) => `${h.tradingsymbol}: ${h.quantity}`));
+
+// Sell everything (returns [{ tradingsymbol, quantity, orderId }])
+await sellAll();
 ```
 
 ## What doesn't work / known limitations
