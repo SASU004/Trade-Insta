@@ -1,6 +1,6 @@
 import dns from "node:dns";
 import net from "node:net";
-import { KiteConnect } from "kiteconnect";
+import { KiteConnect, type Connect } from "kiteconnect";
 
 // Kite checks the IP of the outgoing request. This machine has both
 // IPv4 (whitelisted) and IPv6 (not). Prefer IPv4 so placeOrder matches.
@@ -28,7 +28,7 @@ export function getKiteConfig() {
   };
 }
 
-export function createKiteClient(): KiteConnect {
+export function createKiteClient(): Connect {
   const { apiKey, accessToken } = getKiteConfig();
   const kc = new KiteConnect({ api_key: apiKey });
   kc.setAccessToken(accessToken);
