@@ -37,11 +37,20 @@ bunx tsc --noEmit                     # typecheck
 
 - `config.ts` — central env loading + `createKiteClient()`, IPv4-first workaround for Kite IP whitelisting.
 - `index.ts` — `getProfile()` via env client; runs only when executed directly (`import.meta.main`), so importing it has no side effects.
-- `trade.ts` — `placeOrder(symbol, "BUY" | "SELL", qty)` helper with basic validation (non-empty symbol, positive-int qty), hardcoded to `NSE` / `CNC` / `MARKET`.
+- `trade.ts` — `placeOrder(symbol, "BUY" | "SELL", qty)` helper with basic validation (non-empty symbol, positive-int qty), hardcoded to `NSE` / `CNC` / `MARKET`. Duplicated basics: `buyStock(symbol, qty)` / `sellStock(symbol, qty)` thin wrappers, plus `getHoldings()` (lists Kite equity holdings) and `sellAll()` (MARKET-sells every holding with `quantity > 0`).
+
+```ts
+import { buyStock, sellStock, getHoldings, sellAll } from "./trade";
+
+await buyStock("INFY", 1);
+await sellStock("INFY", 1);
+await getHoldings();
+await sellAll(); // sells every holding, returns [{ tradingsymbol, quantity, orderId }]
+```
 
 ## What doesn't work / known limitations
 
-- `mcp-server.ts` is a **stub, not wired to trading**. Tools `buy-stock` / `sell-stock` just return `"Bought X!"` / `"Sold X!"` text — they never call `trade.ts` or Kite. Connecting them is the actual MCP learning TODO.
+- `mcp-server.ts` is a **stub, not wired to trading**. Tools `buy-stock` / `sell-stock` / `get-holdings` / `sell-all` just return stub text — they never call `trade.ts` or Kite. Connecting them is the actual MCP learning TODO.
 - No dry-run / paper mode — `placeOrder` hits the live API when called.
 - `NSE` / `CNC` / `MARKET` are hardcoded; no stop-loss, GTT, margins, or error retry.
 - Kite `access_token` expires daily (~morning IST); you must regenerate via `--generate-session`.

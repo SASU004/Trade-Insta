@@ -26,6 +26,28 @@ server.registerTool(
     })
 );
 
+server.registerTool(
+    'get-holdings',
+    {
+        description: 'List current holdings',
+        inputSchema: z.object({})
+    },
+    async () => ({
+        content: [{ type: 'text', text: `Holdings: (stub, not wired to Kite yet)` }]
+    })
+);
+
+server.registerTool(
+    'sell-all',
+    {
+        description: 'Sell all holdings',
+        inputSchema: z.object({})
+    },
+    async () => ({
+        content: [{ type: 'text', text: `Sold all holdings! (stub, not wired to Kite yet)` }]
+    })
+);
+
 async function main() {
     const transport = new StdioServerTransport();
     await server.connect(transport);
